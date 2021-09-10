@@ -15,15 +15,15 @@ shinyServer(function(session, input, output) {
         dateFin     <- input$datesRange[2]
         
         # Execution
-        tempData                                       <- tempDataCovid[which(tempDataCovid$dep %in% departement & tempDataCovid$sexe == sexe),]
+        tempData                                       <- tempDataCovid[which(as.numeric(tempDataCovid$dep) %in% as.numeric(departement)),]
         tempData[,"jour2"]                             <- as.Date(as.character(tempData$jour), format = "%Y-%m-%d", origin = "1970-01-01")
         tempData[which(is.na(tempData$jour2)),"jour2"] <- as.Date(as.character(tempData$jour[which(is.na(tempData$jour2))]), format = "%d/%m/%Y", origin = "1970-01-01")
         tempData$jour                                  <- tempData$jour2
         tempData                                       <- tempData[,-which(colnames(tempData) == "jour2")]
         tempData                                       <- tempData[which(tempData$jour >= dateDebut & tempData$jour <= dateFin),]
-        
+
         # stockage reactive Value
-        database$tempData <- tempData
+        database$tempData <- tempData[which(tempData$sexe == as.numeric(sexe)),]
     })
     
     output$hospPlot <- renderPlot({
